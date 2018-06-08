@@ -24,7 +24,7 @@ aaggbbrr <- function(x) {
 }
 
 
-line_colour <- aaggbbrr(tolower(viridis::viridis(length(unique(tripID)))[factor(tripID)]))
+line_colour <- aaggbbrr(tolower(sample(viridis::viridis(length(unique(tripID))))[factor(tripID)]))
 
 library(glue)
 

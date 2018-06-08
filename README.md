@@ -37,3 +37,31 @@ ellie_IMOS <- tibble::as_tibble(readRDS("ellie_IMOS.RDS"))
 
 The `ellie_IMOS` data set is in KML form in this subfolder "/kml/". 
 
+
+## SST
+
+There is a reduced resolution OISST data set matching the ellie_IMOS tracks 
+in sst/. This is 5-day sampled from 1-day, and reduced to 0.5 degree resolution from 0.25. 
+
+```{r, eval = FALSE}
+library(raster)
+sst <- readRDS("sst/ellie-sst.rds")
+
+## beware, 100Mb of expanded raster here
+## turn into data.frame with  lon, lat, and date (dimindex)
+library(tabularaster)
+library(dplyr)
+tabularaster::as_tibble(sst, cell = FALSE, xy = TRUE) %>% 
+ dplyr::filter(!is.na(cellvalue)) %>% 
+ dplyr::rename(sst = cellvalue, date = dimindex)
+# A tibble: 3,315,200 x 4
+#     sst date                    x     y
+#   <dbl> <dttm>              <dbl> <dbl>
+# 1  11.8 2013-02-14 19:43:56  -1.5 -42.8
+# 2  11.8 2013-02-14 19:43:56  -1   -42.8
+# 3  11.9 2013-02-14 19:43:56  -0.5 -42.8
+# 4  12.1 2013-02-14 19:43:56   0   -42.8
+# 5  12.2 2013-02-14 19:43:56   0.5 -42.8
+# ...
+```
+
