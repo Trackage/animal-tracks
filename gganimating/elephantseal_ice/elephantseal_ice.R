@@ -13,13 +13,14 @@ sub <- ele %>% dplyr::inner_join(slc %>% sample_frac(.2), "id") %>% sample_frac(
   rename(ele = id) %>% 
   arrange(ele, date)
 
-pice <- st_transform(ice, proj) %>% dplyr::rename(ice_date = date)
+pice <- st_transform(ice, proj) #%>% dplyr::rename(ice_date = date)
 ggplot() + 
   geom_sf(data = pice %>% dplyr::filter((row_number() %% 10) == 1)) + 
-  transition_manual(ice_date) +
-  geom_path(data = sub , aes(X, Y, group = ele, colour = ele)) +
- 
- transition_reveal(ele, date)
+  geom_point(data = sub , aes(X, Y, colour = ele)) +
+  transition_manual(date) 
+
+  
+
  
 
 
