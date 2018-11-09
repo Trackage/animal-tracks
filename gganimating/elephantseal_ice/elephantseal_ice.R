@@ -8,16 +8,21 @@ lat_0 <- round(mean(ele$lat), 1)
 proj <- glue::glue("+proj=stere +lon_0={lon_0} +lat_0={lat_0} +datum=WGS84")
 ele[c("X", "Y")] <- rgdal::project(as.matrix(ele[c("lon", "lat")]), proj)
 slc <- ele %>% dplyr::filter(between(date, min(ice$date), max(ice$date))) %>% distinct(id)
-sub <- ele %>% dplyr::inner_join(slc %>% sample_frac(.2), "id") %>% sample_frac(.01) %>% 
-  #rename(ele_date = date) %>% 
-  rename(ele = id) %>% 
-  arrange(ele, date)
+sub <- ele %>% dplyr::inner_join(slc, "id") %>% sample_frac(.1) %>% 
+  arrange(id, date)
 
-pice <- st_transform(ice, proj) #%>% dplyr::rename(ice_date = date)
+pice <- st_transform(ice, proj) %>% dplyr::filter((row_number() %% 10) == 1) %>% 
+  dplyr::mutate(id = "i am ice") 
 ggplot() + 
-  geom_sf(data = pice %>% dplyr::filter((row_number() %% 10) == 1)) + 
-  geom_point(data = sub , aes(X, Y, colour = ele)) +
-  transition_manual(date) 
+ geom_point(data = sub , aes(X, Y, colour = id)) +
+  geom_sf(data = pice) +
+    gganimate::transition_time(date)
+
+  #transition_reveal(10, date)
+
+
+
+
 
   
 
